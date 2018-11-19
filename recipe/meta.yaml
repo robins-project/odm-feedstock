@@ -1,0 +1,67 @@
+{% set name = "ODM" %}
+{% set version = "master" %}
+{% set sha256 = "948733cfa4170fedbbbde92dd8f5cc10703d948133c4eb8b547417ce6afbf4c0" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  fn: {{ name }}-{{ version }}.tar.gz
+  url: https://github.com/OpenDroneMap/{{ name }}/archive/{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+  patches:
+    - ODM.patch
+
+build:
+  number: 1
+
+requirements:
+  build:
+    # - {{ compiler('c') }}
+    # - {{ compiler('cxx') }}
+    - cmake
+    - ninja
+
+  host:
+    - exiv2 {{ exiv2 }}
+    - eigen {{ eigen }}
+    - pangolin {{ pangolin }}
+    - opencv {{ opencv }}
+    - orb_slam2 {{ orb_slam2 }}
+    - flann {{ flann }}
+    - pcl {{ pcl }}
+    - vtk {{ vtk }}
+    - proj4
+    - boost
+
+  run:
+    - ecto {{ ecto }}
+    - laszip {{ laszip }}
+    - exiv2 {{ exiv2 }}
+    - pangolin {{ pangolin }}
+    - opencv {{ opencv }}
+    - orb_slam2 {{ orb_slam2 }}
+    - opensfm {{ opensfm }}
+    - flann {{ flann }}
+    - pcl {{ pcl }}
+    - vtk {{ vtk }}
+    - geotiff {{ geotiff }}
+    - pdal {{ pdal }}
+    - mve {{ mve }}
+    - smvs {{ smvs }}
+    - mvstexturing {{ mvstexturing }}
+    - poissonrecon {{ poissonrecon }}
+    - dem2mesh {{ dem2mesh }}
+    - dem2points {{ dem2points }}
+    - proj4
+    - boost
+
+about:
+  home: https://www.opendronemap.org
+  summary: A command line toolkit to generate maps, point clouds, 3D models and DEMs from drone, balloon or kite images.
+  license: GPL 3.0
+
+extra:
+  recipe-maintainers:
+  - v-turin
