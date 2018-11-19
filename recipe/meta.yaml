@@ -1,6 +1,6 @@
 {% set name = "ODM" %}
 {% set version = "master" %}
-{% set sha256 = "948733cfa4170fedbbbde92dd8f5cc10703d948133c4eb8b547417ce6afbf4c0" %}
+{% set sha256 = "fc04f61e15c75c4318effcabf41ccf499e5d027954dc50ccc3c9129f81193000" %}
 
 package:
   name: {{ name|lower }}
