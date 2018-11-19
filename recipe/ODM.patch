@@ -1,0 +1,306 @@
+diff --git a/modules/odm_extract_utm/CMakeLists.txt b/modules/odm_extract_utm/CMakeLists.txt
+index c904600..e8da20f 100644
+--- a/modules/odm_extract_utm/CMakeLists.txt
++++ b/modules/odm_extract_utm/CMakeLists.txt
+@@ -1,10 +1,11 @@
+ project(odm_extract_utm)
+ cmake_minimum_required(VERSION 2.8)
+ 
+-set(PROJ4_INCLUDE_DIR "/usr/include/" CACHE "PROJ4_INCLUDE_DIR" "Path to the proj4 inlcude directory")
++#set(PROJ4_INCLUDE_DIR "/usr/include/" CACHE "PROJ4_INCLUDE_DIR" "Path to the proj4 inlcude directory")
++find_path(PROJ4_INCLUDE_DIR proj.h /usr/include)
+ 
+ find_library(PROJ4_LIBRARY "libproj.so" PATHS "/usr/lib" "/usr/lib/x86_64-linux-gnu")
+-find_library(EXIV2_LIBRARY "libexiv2.so.26" PATHS "${PROJECT_SOURCE_DIR}/../../SuperBuild/install/lib")
++find_library(EXIV2_LIBRARY "libexiv2.so" PATHS "${PROJECT_SOURCE_DIR}/../../SuperBuild/install/lib")
+ include_directories("${PROJECT_SOURCE_DIR}/../../SuperBuild/install/include")
+ 
+ # Add compiler options.
+@@ -18,4 +19,3 @@ add_executable(${PROJECT_NAME} ${SRC_LIST})
+ 
+ # Link
+ target_link_libraries(${PROJECT_NAME} ${PROJ4_LIBRARY} ${EXIV2_LIBRARY})
+-
+diff --git a/modules/odm_georef/CMakeLists.txt b/modules/odm_georef/CMakeLists.txt
+index 4699436..f0d63e2 100644
+--- a/modules/odm_georef/CMakeLists.txt
++++ b/modules/odm_georef/CMakeLists.txt
+@@ -4,7 +4,8 @@ cmake_minimum_required(VERSION 2.8)
+ # Set pcl dir to the input spedified with option -DPCL_DIR="path"
+ set(PCL_DIR "PCL_DIR-NOTFOUND" CACHE "PCL_DIR" "Path to the pcl installation directory")
+ set(OPENCV_DIR "OPENCV_DIR-NOTFOUND" CACHE "OPENCV_DIR" "Path to the opencv installation directory")
+-set(PROJ4_INCLUDE_DIR "/usr/include/" CACHE "PROJ4_INCLUDE_DIR" "Path to the proj4 inlcude directory")
++#set(PROJ4_INCLUDE_DIR "/usr/include/" CACHE "PROJ4_INCLUDE_DIR" "Path to the proj4 inlcude directory")
++find_path(PROJ4_INCLUDE_DIR proj.h /usr/include)
+ find_library(PROJ4_LIBRARY "libproj.so" PATHS "/usr/lib" "/usr/lib/x86_64-linux-gnu")
+ #set(PROJ4_LIBRARY "/usr/lib/x86_64-linux-gnu/libproj.so" CACHE "PROJ4_LIBRARY" "Path to the proj4 library directory")
+ 
+@@ -12,7 +13,7 @@ find_library(PROJ4_LIBRARY "libproj.so" PATHS "/usr/lib" "/usr/lib/x86_64-linux-
+ add_definitions(-Wall -Wextra -Wconversion -pedantic -std=c++11)
+ 
+ # Find pcl at the location specified by PCL_DIR
+-find_package(VTK 6.0 REQUIRED)
++find_package(VTK REQUIRED)
+ find_package(PCL 1.8 HINTS "${PCL_DIR}/share/pcl-1.8")
+ 
+ # Find OpenCV at the default location
+@@ -21,7 +22,7 @@ find_package(OpenCV HINTS "${OPENCV_DIR}" REQUIRED)
+ # Only link with required opencv modules.
+ set(OpenCV_LIBS opencv_core opencv_imgproc opencv_highgui)
+ 
+-# Add the PCL and Eigen include dirs. 
++# Add the PCL and Eigen include dirs.
+ # Necessary since the PCL_INCLUDE_DIR variable set bu find_package is broken.)
+ include_directories(${PCL_ROOT}/include/pcl-${PCL_VERSION_MAJOR}.${PCL_VERSION_MINOR})
+ include_directories(${EIGEN_ROOT})
+diff --git a/modules/odm_orthophoto/CMakeLists.txt b/modules/odm_orthophoto/CMakeLists.txt
+index 6494abb..ce8e9ae 100644
+--- a/modules/odm_orthophoto/CMakeLists.txt
++++ b/modules/odm_orthophoto/CMakeLists.txt
+@@ -9,9 +9,12 @@ set(OPENCV_DIR "OPENCV_DIR-NOTFOUND" CACHE "OPENCV_DIR" "Path to the OPENCV inst
+ add_definitions(-Wall -Wextra)
+ 
+ # Find pcl at the location specified by PCL_DIR
+-find_package(VTK 6.0 REQUIRED)
++find_package(VTK REQUIRED)
+ find_package(PCL 1.8 HINTS "${PCL_DIR}/share/pcl-1.8" REQUIRED)
+ 
++# Blas
++find_package(BLAS QUIET)
++
+ # Find OpenCV at the default location
+ find_package(OpenCV HINTS "${OPENCV_DIR}" REQUIRED)
+ 
+@@ -31,4 +34,4 @@ aux_source_directory("./src" SRC_LIST)
+ 
+ # Add exectuteable
+ add_executable(${PROJECT_NAME} ${SRC_LIST})
+-target_link_libraries(odm_orthophoto ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${PCL_SURFACE_LIBRARIES} ${OpenCV_LIBS})
+\ No newline at end of file
++target_link_libraries(odm_orthophoto ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${PCL_SURFACE_LIBRARIES} ${OpenCV_LIBS} ${BLAS_LIBRARIES})
+diff --git a/modules/odm_slam/CMakeLists.txt b/modules/odm_slam/CMakeLists.txt
+index 082534d..b61a16b 100644
+--- a/modules/odm_slam/CMakeLists.txt
++++ b/modules/odm_slam/CMakeLists.txt
+@@ -8,12 +8,18 @@ set(OPENCV_DIR "OPENCV_DIR-NOTFOUND" CACHE "OPENCV_DIR" "Path to the opencv inst
+ add_definitions(-Wall -Wextra)
+ 
+ # Find pcl at the location specified by PCL_DIR
+-find_package(VTK 6.0 REQUIRED)
++find_package(VTK REQUIRED)
+ find_package(PCL 1.8 HINTS "${PCL_DIR}/share/pcl-1.8" REQUIRED)
+ 
+ # Find OpenCV at the default location
+ find_package(OpenCV HINTS "${OPENCV_DIR}" REQUIRED)
+ 
++# Blas
++find_package(BLAS QUIET)
++
++# Find OpenGL
++find_package(OpenGL REQUIRED)
++
+ # Only link with required opencv modules.
+ set(OpenCV_LIBS opencv_core opencv_imgproc opencv_highgui)
+ 
+@@ -26,10 +32,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -std=c++11")
+ 
+ set(PANGOLIN_ROOT ${CMAKE_BINARY_DIR}/../SuperBuild/install)
+ 
+-set(ORB_SLAM_ROOT ${CMAKE_BINARY_DIR}/../SuperBuild/src/orb_slam2)
++set(ORB_SLAM_ROOT ${CMAKE_BINARY_DIR}/../SuperBuild/install)
+ 
+ include_directories(${EIGEN_ROOT})
+-include_directories(${ORB_SLAM_ROOT})
++#include_directories(${ORB_SLAM_ROOT})
+ include_directories(${ORB_SLAM_ROOT}/include)
+ link_directories(${PANGOLIN_ROOT}/lib)
+ link_directories(${ORB_SLAM_ROOT}/lib)
+@@ -39,4 +45,4 @@ aux_source_directory("./src" SRC_LIST)
+ 
+ # Add exectuteable
+ add_executable(${PROJECT_NAME} ${SRC_LIST})
+-target_link_libraries(odm_slam ${OpenCV_LIBS} ORB_SLAM2 pangolin)
++target_link_libraries(odm_slam ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ORB_SLAM2 pangolin ${BLAS_LIBRARIES})
+diff --git a/modules/odm_slam/src/OdmSlam.cpp b/modules/odm_slam/src/OdmSlam.cpp
+index 1fe7505..0f00590 100644
+--- a/modules/odm_slam/src/OdmSlam.cpp
++++ b/modules/odm_slam/src/OdmSlam.cpp
+@@ -74,15 +74,20 @@ int main(int argc, char **argv) {
+     double T = 0.1;  // Seconds between frames
+     cv::Mat im;
+     int num_frames = cap.get(CV_CAP_PROP_FRAME_COUNT);
+-    for(int ni = 0;; ++ni){
++    for(int ni = 0; ni < num_frames; ++ni){
+         std::cout << "processing frame " << ni << "/" << num_frames << std::endl;
+         // Get frame
+         bool res = false;
+-        for (int trial = 0; !res && trial < 20; ++trial) {
++        for (int trial = 0; !res && trial < 200; ++trial) {
+             std::cout << "trial " << trial << std::endl;
+             res = cap.read(im);
+         }
+         if(!res) break;
++        // cap >> im;
++        // if (im.empty()) {
++        //     std::cout << "empty frame " << ni << std::endl;
++        //     continue;
++        // }
+ 
+         double timestamp = ni * T;
+ 
+diff --git a/modules/odm_slam/src/orb_slam_to_opensfm.py b/modules/odm_slam/src/orb_slam_to_opensfm.py
+index fae1fed..86f9a48 100644
+--- a/modules/odm_slam/src/orb_slam_to_opensfm.py
++++ b/modules/odm_slam/src/orb_slam_to_opensfm.py
+@@ -121,8 +121,12 @@ def tracks_from_map_points(filename):
+ 
+ def get_video_size(video):
+     cap = cv2.VideoCapture(video)
+-    width = int(cap.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH))
+-    height = int(cap.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT))
++    if hasattr(cv2, 'cv'):
++        width = int(cap.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH))
++        height = int(cap.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT))
++    else:
++        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
++        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+     cap.release()
+     return width, height
+ 
+diff --git a/opendm/config.py b/opendm/config.py
+index 6769838..f59743a 100644
+--- a/opendm/config.py
++++ b/opendm/config.py
+@@ -188,6 +188,10 @@ def config():
+                         help='Run local bundle adjustment for every image added to the reconstruction and a global '
+                              'adjustment every 100 images. Speeds up reconstruction for very large datasets.')
+ 
++    parser.add_argument('--use-opensfm-params',
++                        metavar='<string>',
++                        help='Use additional parameters of opensfm')
++
+     parser.add_argument('--use-3dmesh',
+                     action='store_true',
+                     default=False,
+diff --git a/opendm/context.py b/opendm/context.py
+index 53edb9d..bc24843 100644
+--- a/opendm/context.py
++++ b/opendm/context.py
+@@ -7,40 +7,38 @@ import multiprocessing
+ scripts_path = os.path.abspath(os.path.dirname(__file__))
+ root_path, _ = os.path.split(scripts_path)
+ 
+-superbuild_path = os.path.join(root_path, 'SuperBuild')
+-superbuild_bin_path = os.path.join(superbuild_path, 'install', 'bin')
++superbuild_path = os.environ['CONDA_PREFIX']
++superbuild_bin_path = os.path.join(superbuild_path, 'bin')
+ tests_path = os.path.join(root_path, 'tests')
+ tests_data_path = os.path.join(root_path, 'tests/test_data')
+ 
+ # add opencv to python path
+-pyopencv_path = os.path.join(superbuild_path, 'install/lib/python2.7/dist-packages')
+-sys.path.append(pyopencv_path)
++pyopencv_path = os.path.join(superbuild_path, 'lib/python2.7/site-packages')
+ 
+ # define opensfm path
+-opensfm_path = os.path.join(superbuild_path, "src/opensfm")
+-ccd_widths_path = os.path.join(opensfm_path, 'opensfm/data/sensor_data.json')
++opensfm_path = superbuild_path
++ccd_widths_path = os.path.join(opensfm_path, 'lib/python2.7/site-packages/opensfm/data/sensor_data.json')
+ 
+ # define orb_slam2 path
+-orb_slam2_path = os.path.join(superbuild_path, "src/orb_slam2")
++orb_slam2_path = superbuild_path
+ 
+ # define smvs join_paths
+-makescene_path = os.path.join(superbuild_path, 'src', 'elibs', 'mve', 'apps', 'makescene', 'makescene') #TODO: don't install in source
+-smvs_path = os.path.join(superbuild_path, 'src', 'elibs', 'smvs', 'app', 'smvsrecon')
+-
+-poisson_recon_path = os.path.join(superbuild_path, 'src', 'PoissonRecon', 'Bin', 'Linux', 'PoissonRecon')
+-dem2mesh_path = os.path.join(superbuild_path, 'src', 'dem2mesh', 'dem2mesh')
+-dem2points_path = os.path.join(superbuild_path, 'src', 'dem2points', 'dem2points')
++makescene_path = os.path.join(superbuild_path, 'bin', 'makescene')
++smvs_path = os.path.join(superbuild_path, 'bin', 'smvsrecon')
+ 
++poisson_recon_path = os.path.join(superbuild_path, 'bin', 'PoissonRecon')
++dem2mesh_path = os.path.join(superbuild_path, 'bin', 'dem2mesh')
++dem2points_path = os.path.join(superbuild_path, 'bin', 'dem2points')
+ 
+ # define mvstex path
+-mvstex_path = os.path.join(superbuild_path, "install/bin/texrecon")
++mvstex_path = os.path.join(superbuild_path, "bin/texrecon")
+ 
+ # define txt2las path
+-txt2las_path = os.path.join(superbuild_path, 'src/las-tools/bin')
+-pdal_path = os.path.join(superbuild_path, 'build/pdal/bin')
++txt2las_path = os.path.join(superbuild_path, 'bin')
++pdal_path = os.path.join(superbuild_path, 'bin')
+ 
+ # define odm modules path
+-odm_modules_path = os.path.join(root_path, "build/bin")
++odm_modules_path = os.path.join(superbuild_path, "bin")
+ odm_modules_src_path = os.path.join(root_path, "modules")
+ 
+ settings_path = os.path.join(root_path, 'settings.yaml')
+diff --git a/run.py b/run.py
+old mode 100644
+new mode 100755
+index 43d7a1e..8248b51
+--- a/run.py
++++ b/run.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#!/usr/bin/env python
+ 
+ from opendm import log
+ from opendm import config
+diff --git a/scripts/odm_app.py b/scripts/odm_app.py
+index 6d9794b..373b693 100644
+--- a/scripts/odm_app.py
++++ b/scripts/odm_app.py
+@@ -47,7 +47,8 @@ class ODMApp(ecto.BlackBox):
+                                            matching_gps_neighbors=p.args.matcher_neighbors,
+                                            matching_gps_distance=p.args.matcher_distance,
+                                            fixed_camera_params=p.args.use_fixed_camera_params,
+-                                           hybrid_bundle_adjustment=p.args.use_hybrid_bundle_adjustment),
++                                           hybrid_bundle_adjustment=p.args.use_hybrid_bundle_adjustment,
++                                           additional_parameters=p.args.use_opensfm_params),
+                  'slam': ODMSlamCell(),
+                  'smvs': ODMSmvsCell(alpha=p.args.smvs_alpha,
+                                      max_pixels=p.args.depthmap_resolution*p.args.depthmap_resolution,
+diff --git a/scripts/odm_slam.py b/scripts/odm_slam.py
+index 5e53297..95c3008 100644
+--- a/scripts/odm_slam.py
++++ b/scripts/odm_slam.py
+@@ -79,7 +79,7 @@ class ODMSlamCell(ecto.Cell):
+                 slam_config,
+             ]))
+             # link opensfm images to resized images
+-            os.symlink(tree.opensfm + '/images', tree.dataset_resize)
++            os.symlink(tree.opensfm + '/images', tree.dataset_raw)
+         else:
+             log.ODM_WARNING('Found a valid OpenSfM file in: {}'.format(
+                 tree.opensfm_reconstruction))
+diff --git a/scripts/run_opensfm.py b/scripts/run_opensfm.py
+index 346b598..55d7312 100644
+--- a/scripts/run_opensfm.py
++++ b/scripts/run_opensfm.py
+@@ -16,6 +16,7 @@ class ODMOpenSfMCell(ecto.Cell):
+         params.declare("matching_gps_distance", "The application arguments.", 0)
+         params.declare("fixed_camera_params", "Optimize internal camera parameters", True)
+         params.declare("hybrid_bundle_adjustment", "Use local + global bundle adjustment", False)
++        params.declare("additional_parameters", "Use additional parameters of opensfm", "")
+ 
+     def declare_io(self, params, inputs, outputs):
+         inputs.declare("tree", "Struct with paths", [])
+@@ -99,6 +100,10 @@ class ODMOpenSfMCell(ecto.Cell):
+             if tree.odm_georeferencing_gcp:
+                 config.append("bundle_use_gcp: yes")
+                 io.copy(tree.odm_georeferencing_gcp, tree.opensfm)
++            if self.params.additional_parameters:
++                for s in self.params.additional_parameters.split(";"):
++                    k, v = s.split(":")
++                    config.append("{}: {}".format(k, v))
+ 
+             # write config file
+             log.ODM_DEBUG(config)
