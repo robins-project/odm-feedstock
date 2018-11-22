@@ -7,6 +7,7 @@ cd build
 
 export LDFLAGS="$LDFLAG -fuse-ld=gold -Wl,--no-as-needed"
 
+#      -DOpenGL_GL_PREFERENCE=GLVND                    \
 cmake -G "Ninja" \
       -DCMAKE_INSTALL_PREFIX=$PREFIX                  \
       -DCMAKE_PREFIX_PATH=$PREFIX                     \
@@ -14,7 +15,6 @@ cmake -G "Ninja" \
       -DODM_BUILD_SLAM:BOOL=ON                        \
       -DBLA_VENDOR=Intel10_64lp                       \
       -DCMAKE_LIBRARY_ARCHITECTURE=x86_64-linux-gnu   \
-      -DOpenGL_GL_PREFERENCE=GLVND                    \
       ..
 
 ninja
