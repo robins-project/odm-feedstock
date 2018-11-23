@@ -7,8 +7,9 @@ cd build
 
 export LDFLAGS="$LDFLAG -fuse-ld=gold -Wl,--no-as-needed"
 
+#cmake -G "Ninja" \
 #      -DOpenGL_GL_PREFERENCE=GLVND                    \
-cmake -G "Ninja" \
+cmake                                                 \
       -DCMAKE_INSTALL_PREFIX=$PREFIX                  \
       -DCMAKE_PREFIX_PATH=$PREFIX                     \
       -DCMAKE_BUILD_TYPE:STRING=Release               \
@@ -17,7 +18,8 @@ cmake -G "Ninja" \
       -DCMAKE_LIBRARY_ARCHITECTURE=x86_64-linux-gnu   \
       ..
 
-ninja
+#ninja
+make  -j${CPU_COUNT}
 
 # Install
 cd ..

@@ -21,7 +21,7 @@ requirements:
     # - {{ compiler('c') }}
     # - {{ compiler('cxx') }}
     - cmake
-    - ninja
+    # - ninja
 
   host:
     - exiv2 {{ exiv2 }}
