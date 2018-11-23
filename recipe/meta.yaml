@@ -34,6 +34,7 @@ requirements:
     - vtk {{ vtk }}
     - proj4
     - boost
+    - glew
 
   run:
     - ecto {{ ecto }}
@@ -56,6 +57,7 @@ requirements:
     - dem2points {{ dem2points }}
     - proj4
     - boost
+    - glew
 
 about:
   home: https://www.opendronemap.org
