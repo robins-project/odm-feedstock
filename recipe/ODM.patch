@@ -79,7 +79,7 @@ index 6494abb..ce8e9ae 100644
 \ No newline at end of file
 +target_link_libraries(odm_orthophoto ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${PCL_SURFACE_LIBRARIES} ${OpenCV_LIBS} ${BLAS_LIBRARIES})
 diff --git a/modules/odm_slam/CMakeLists.txt b/modules/odm_slam/CMakeLists.txt
-index 082534d..6e8e744 100644
+index 082534d..da95109 100644
 --- a/modules/odm_slam/CMakeLists.txt
 +++ b/modules/odm_slam/CMakeLists.txt
 @@ -8,12 +8,21 @@ set(OPENCV_DIR "OPENCV_DIR-NOTFOUND" CACHE "OPENCV_DIR" "Path to the opencv inst
@@ -99,7 +99,7 @@ index 082534d..6e8e744 100644
 +# Find OpenGL
 +find_package(OpenGL REQUIRED)
 +
-+# Gind GLEW
++# Find GLEW
 +find_package(GLEW REQUIRED)
 +
  # Only link with required opencv modules.
