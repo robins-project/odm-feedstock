@@ -58,6 +58,8 @@ requirements:
     - proj4
     - boost
     - glew
+    - opengv {{ opengv }}
+    - gdal {{ gdal }}
 
 about:
   home: https://www.opendronemap.org
