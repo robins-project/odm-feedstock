@@ -1,6 +1,7 @@
 {% set name = "ODM" %}
-{% set version = "master" %}
-{% set sha256 = "e9931964a9c483e7e3a9185deb4bf62b91642fb27a2a94b99ac057216ff9db85" %}
+{% set version = "v0.5.0" %}
+{% set commit = "cd34d9d16bf048cd726e2e7a9f36311cb21f7a52" %}
+{% set sha256 = "38bb96a08d1fafa7a87057778a8acc90625d1a56ce56769b9243c80a2630bddd" %}
 
 package:
   name: {{ name|lower }}
@@ -8,7 +9,7 @@ package:
 
 source:
   fn: {{ name }}-{{ version }}.tar.gz
-  url: https://github.com/OpenDroneMap/{{ name }}/archive/{{ version }}.tar.gz
+  url: https://github.com/OpenDroneMap/{{ name }}/archive/{{ commit }}.tar.gz
   sha256: {{ sha256 }}
   patches:
     - ODM.patch

@@ -30,6 +30,7 @@ odm_dir=$SP_DIR/odm
 
 mkdir -p $odm_dir
 cp run.py $odm_dir
+chmod +x $odm_dir/run.py
 cp settings.yaml $odm_dir
 cp VERSION $odm_dir
 
